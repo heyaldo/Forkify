@@ -41,6 +41,18 @@ elements.searchForm.addEventListener('submit', e => {
     controlSearch();
 });
 
+elements.searchResPages.addEventListener('click', e => {
+    // console.log(e.target);
+    const btn = e.target.closest('.btn-inline');
+    // console.log(btn);
+    if (btn) {
+        searchView.clearList();
+        const goToPage = parseInt(btn.dataset.goto, 10);
+        console.log(goToPage);
+        searchView.renderResults(state.search.result, goToPage);
+    }
+});
+
 //const search = new Search('pizza');
 //console.log(search);
 //search.getResults();
