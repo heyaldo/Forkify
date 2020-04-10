@@ -1,5 +1,6 @@
 // Global app controller
 import Search from './models/Search';
+import Recipe from './models/Recipe';
 import * as searchView from './views/searchView';
 import { elements, renderLoader, clearLoader } from './views/base';
 
@@ -26,13 +27,19 @@ const controlSearch = async () => {
         searchView.clearList();
         renderLoader(elements.searchListBox);
 
-        // 4) Search for recipes
-        await state.search.getResults();
+        try {
+            // 4) Search for recipes
+            await state.search.getResults();
 
-        // 5) Render the results on UI
-        clearLoader();
-        console.log(state.search.result);
-        searchView.renderResults(state.search.result);
+            // 5) Render the results on UI
+            clearLoader();
+            console.log(state.search.result);
+            searchView.renderResults(state.search.result);
+        }catch(error){
+            alert('Something wrong with the search...');
+            clearLoader();
+        }
+        
     }
 };
 
@@ -56,3 +63,41 @@ elements.searchResPages.addEventListener('click', e => {
 //const search = new Search('pizza');
 //console.log(search);
 //search.getResults();
+
+//const r = new Recipe(35626);
+//r.getRecipe();
+//console.log(r);
+
+/**
+ * Recipe Controller
+ */
+const controlRecipe = async () => {
+    // Get id from the url
+    const id = window.location.hash.replace('#', '');
+    console.log(id);
+
+    if(id) {
+        // Prepare UI for changes
+
+        // Create new recipe object
+        state.recipe = new Recipe(id);
+
+        try {
+            // Get recipe data
+            await state.recipe.getRecipe();
+
+            // Calculate servings and time 
+            state.recipe.calcTime();
+            state.recipe.calcServings();
+
+            // Render recipe
+            console.log(state.recipe);
+        } catch(error){
+            alert('Error processing recipe');
+        }
+            
+    }
+};
+
+// window.addEventListener('hashchange', controlRecipe);
+['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe));
