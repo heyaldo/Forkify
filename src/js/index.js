@@ -2,10 +2,12 @@
 import Search from './models/Search';
 import Recipe from './models/Recipe';
 import List from './models/List';
+import Likes from './models/Likes';
 import * as searchView from './views/searchView';
 import * as recipeView from './views/recipeView';
 import * as listView from './views/listView';
 import { elements, renderLoader, clearLoader } from './views/base';
+
 
 
 /** Global state of the app
@@ -156,6 +158,40 @@ elements.shopping.addEventListener('click', e => {
 
 });
 
+/***
+ * Likes Controller
+ */
+const controlLike = () => {
+
+    //Create a new List IF there is none yet
+    if (!state.likes) state.likes = new Likes();
+    const currentID = state.recipe.id;
+    
+    // Add Like
+    if(!state.likes.isLike(currentID)) {
+        // Add like to the state
+        const newLike = state.likes.addLike(
+            currentID,
+            state.recipe.title,
+            state.recipe.author,
+            state.recipe.img
+        );
+        // Toggle the like button
+
+        // Add item to UI list
+        console.log(state.likes);
+
+    } else { // Remove Like
+        // Remove like from the state
+        state.likes.deleteLike(currentID);
+        // Toggle the like button
+
+        // Remove like from the UI list
+        console.log(state.likes);
+    }
+};
+
+
 // Handling recipe button clicks
 elements.recipe.addEventListener('click', e => {
     if(e.target.matches('.btn-decrease, .btn-decrease *')) { // btn-increase and any child 
@@ -169,10 +205,14 @@ elements.recipe.addEventListener('click', e => {
         state.recipe.updateServings('inc');
         recipeView.updateServingsIngredients(state.recipe);
     } else if (e.target.matches('.recipe__btn--add, .recipe__btn--add *')) {
+        // Add ingredients to the shopping list
         controlList();
+    } else if (e.target.matches('.recipe__love, .recipe__love *')) {
+        // Like the recipe
+        controlLike();
     }
     console.log(state.recipe);
     //recipeView.updateServingsIngredients(state.recipe);
 });
  
-window.l = new List();
+//window.l = new List();
