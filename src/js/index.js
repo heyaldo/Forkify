@@ -19,7 +19,7 @@ import { elements, renderLoader, clearLoader } from './views/base';
  */
 const state = {};
 
-window.state = state;
+//window.state = state;
 
 const controlSearch = async () => {
     // 1) Get query from view
@@ -119,6 +119,21 @@ const controlRecipe = async () => {
 // window.addEventListener('hashchange', controlRecipe);
 ['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe));
 
+window.addEventListener('load', () => {
+    state.likes = new Likes();
+
+    // Restore likes
+    state.likes.readStorage();
+
+    // Toggle like menu button
+    likesView.toggleLikeMenu(state.likes.getNumLikes());
+
+    // Render the existings likes
+    state.likes.likes.forEach(like => {
+        likesView.renderLike(like);
+    });
+});
+
 /***
  * List Controller
  */
@@ -162,8 +177,6 @@ elements.shopping.addEventListener('click', e => {
 /***
  * Likes Controller
  */
-
-state.likes = new Likes();
 
 const controlLike = () => {
 
